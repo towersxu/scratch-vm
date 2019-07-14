@@ -46,7 +46,6 @@ const CORE_EXTENSIONS = [
 class VirtualMachine extends EventEmitter {
     constructor () {
         super();
-
         /**
          * VM runtime, to store blocks, I/O devices, sprites/targets, etc.
          * @type {!Runtime}
