@@ -90,7 +90,6 @@ class Scratch3UsbMicrobitBlocks {
             transports: ["websocket"]
         });
         this.socket.on("sensor", function (msg) {
-            console.log('sensor')
             _this.message = msg.message;
             var topic = _this.message.topic;
 
@@ -311,6 +310,22 @@ class Scratch3UsbMicrobitBlocks {
                             defaultValue: 'display.show("c")'
                         }
                     }
+                },
+                {
+                    opcode: "play_music",
+                    // 前端打上标记 危险
+                    blockType: BlockType.COMMAND,
+                    text: formatMessage({
+                        id: "usbMicrobit.play_music",
+                        default: "播放音乐",
+                        description: "play music"
+                    }),
+                    arguments: {
+                        CODE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: "display.scroll('Hello, World!')"
+                        }
+                    }
                 }
             ],
             menus: {
@@ -326,12 +341,35 @@ class Scratch3UsbMicrobitBlocks {
     }
 
     python_exec(args) {
-        console.log(args)
+        console.log(11, args)
         var python_code = args.CODE;
         this.socket.emit("actuator", {
             payload: python_code,
             topic: TOPIC
         });
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, USBSendInterval);
+        });
+    }
+    play_music(args) {
+        console.log('music', args)
+        this.socket.emit("actuator", {
+            payload: 'import music\naaaa="world"\ndisplay.scroll(aaaa)\nmusic.play(music.BIRTHDAY)\ndisplay.scroll("bbbbbb")',
+            topic: TOPIC
+        });
+        // this.socket.emit("actuator", {
+        //     payload: "words = 'this is'",
+        //     topic: TOPIC
+        // });
+        // setTimeout(() => {
+        //     this.socket.emit("actuator", {
+        //         payload: 'display.scroll("xutaods")',
+        //         topic: TOPIC
+        //     });
+        // }, 100)
+        
         return new Promise(resolve => {
             setTimeout(() => {
                 resolve();
